@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zufallsgenerator Bahnhöfe</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #d9ecff;
+      min-height: 100vh;
+    }
+
+    #login {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .login-box {
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 350px;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    .login-box input {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .login-box button {
+      margin-top: 15px;
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: none;
+      background-color: #e53935;
+      color: white;
+      cursor: pointer;
+    }
+
+    .error {
+      color: red;
+      margin-top: 10px;
+    }
+
+    #content {
+      display: none;
+    }
+
+    .container {
+      max-width: 420px;
+      margin: 0 auto;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h1 {
+      margin-top: 30px;
+      margin-bottom: 8px;
+      font-size: 26px;
+    }
+
+    .subtitle {
+      font-size: 18px;
+      color: #444;
+    }
+
+    .button-wrapper {
+      margin-top: 40px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .zufall-button {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      border: none;
+      background-color: #e53935;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #ausgabe {
+      margin-top: 35px;
+      font-size: 22px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+<div id="login">
+  <div class="login-box">
+    <h1>🔒 Geschützt</h1>
+    <p>Bitte Passwort eingeben</p>
+    <input type="password" id="password">
+    <button onclick="checkPassword()">Öffnen</button>
+    <p class="error" id="error"></p>
+  </div>
+</div>
+
+<div id="content">
+  <div class="container">
+    <h1>Keine Reise ohne Bahnchaos</h1>
+    <p class="subtitle">Gestalte deine eigene, chaotische Reise</p>
+
+    <div class="button-wrapper">
+      <button class="zufall-button" onclick="zufall()">ZUFÄLLIGER<br>BAHNHOF</button>
+    </div>
+
+    <p id="ausgabe"></p>
+  </div>
+</div>
+
+<script>
+  /* ===== PASSWORT ===== */
+  const richtigesPasswort = "Ganix";
+
+  function checkPassword() {
+    const eingabe = document.getElementById("password").value;
+    if (eingabe === richtigesPasswort) {
+      document.getElementById("login").style.display = "none";
+      document.getElementById("content").style.display = "block";
+    } else {
+      document.getElementById("error").textContent = "Falsches Passwort";
+    }
+  }
+
+  /* ===== ZUFALL MIT LANGSAMEM STOPP ===== */
+  const bahnhoefe = ["Bad Homburg", "Bad Soden", "Bad Vilbel", "Bad Vilbel Süd",
+        "Bruchenbrücken (Fb)", "DA-Arheilgen", "Darmstadt Hbf",
+        "DA-Wixhausen", "Dietzenbach Bf", "Dietzenbach Mitte",
+        "Dietzenbach Steinberg", "Dortelweil", "Dreieich-Buchschlag",
+        "Eddersheim", "Egelsbach", "Eppstein", "Eppstein-Bremthal",
+        "Eppstein-Niederjosbach", "Erzhausen", "Eschborn",
+        "Eschborn Süd", "F-Berkersheim", "F-Eschersheim",
+        "F-Frankfurter Berg", "F-Gateway Gardens", "F-Ginnheim",
+        "F-Griesheim", "F-Höchst", "F-Höchst Farbwerke",
+        "Flörsheim", "F-Louisa", "F-Mühlberg", "F-Nied",
+        "Frankfurt Flughafen Regionalbahnhof", "Frankfurt Hbf",
+        "Frankfurt Süd", "Frankfurt West", "Friedberg",
+        "Friedrichsdorf", "F-Rödelheim", "F-Sindlingen",
+        "F-Stadion", "F-Zeilsheim", "Galluswarte", "GG-Dornberg",
+        "GG-Dornheim", "Groß-Karben", "Hanau Hbf",
+        "Hanau-Steinheim", "Hattersheim", "Hauptwache",
+        "Heusenstamm", "Hochheim", "Hofheim", "Kelsterbach",
+        "Konstablerwache", "Kriftel", "Kronberg", "Kronberg Süd",
+        "Langen", "Langen-Flugsicherung", "Lokalbahnhof",
+        "Lorsbach", "Mainz Hbf", "Mainz Nord",
+        "Mainz-Bischofsheim", "Mainz-Gustavsburg",
+        "Mainz-Kastel", "Mainz Römisches Theater", "Messe",
+        "Mörfelden", "Mühlheim", "Mühlheim-Dietesheim",
+        "Neu-Isenburg", "Niederhöchstadt", "Niedernhausen",
+        "Niederrad", "Nieder-Wöllstadt", "Obertshausen",
+        "Oberursel-Stierstadt",
+        "Oberursel-Weißkirchen/Steinbach", "OF-Bieber",
+        "Offenbach Ost", "OF-Kaiserlei", "OF-Ledermuseum",
+        "OF-Marktplatz", "OF-Waldhof", "Okarben",
+        "Ostendstraße", "R.-Dudenhofen", "R.-Hainhausen",
+        "R.-Jügesheim", "R.-Nieder-Roden", "Raunheim",
+        "Riedstadt-Goddelau", "Riedstadt-Wolfskehlen",
+        "Rödermark-Ober-Roden", "Rodgau-Rollwald",
+        "Rü.-Opelwerk", "Rüsselsheim", "Schwalbach Limes",
+        "Schwalbach Nord", "Seulberg", "Stresemannallee",
+        "Sulzbach Nord", "Taunusanlage", "Walldorf",
+        "Wiesbaden Hbf", "Wiesbaden Ost", "Zeppelinheim",
+        "Rodgau-Weißkirchen", "Oberursel"];
+
+  let delay = 30;
+  let index = 0;
+
+  function zufall() {
+    const ausgabe = document.getElementById("ausgabe");
+    delay = 50;
+    index = 0;
+
+    function drehen() {
+      const zufall = bahnhoefe[Math.floor(Math.random() * bahnhoefe.length)];
+      ausgabe.textContent = zufall;
+
+      delay += 10; // ← wird immer langsamer
+      index++;
+
+      if (delay < 200) {
+        setTimeout(drehen, delay);
+      }
+    }
+
+    drehen();
+  }
+</script>
+
+</body>
+</html>
